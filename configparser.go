@@ -2,6 +2,7 @@ package configparser
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"regexp"
@@ -97,17 +98,28 @@ func NewConfigParserFromFile(filename string) (*ConfigParser, error) {
 	return p, nil
 }
 
+// NewConfigParser creates a new ConfigParser struct populated from the read data.
+func NewConfigParser(configData []byte) (*ConfigParser, error) {
+	reader := bufio.NewReader(bytes.NewReader(configData))
+	return parseReader(reader)
+}
+
 func parseFile(file *os.File) (*ConfigParser, error) {
-	p := New()
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
+	return parseReader(reader)
+}
+
+func parseReader(reader *bufio.Reader) (*ConfigParser, error) {
+	p := New()
 	var lineNo int
 	var err error
 	var curSect *Section
 
-	for err == nil {
-		l, _, err := reader.ReadLine()
+	for {
+		var l []byte
+		l, _, err = reader.ReadLine()
 		if err != nil {
 			break
 		}
