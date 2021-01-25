@@ -19,6 +19,20 @@ It's easy to parse a configuration file.
   }
 ```
 
+## Parsing read configuration files
+It's easy to parse a read configuration file.
+```Go
+    data = `
+[DEFAULT]
+base_dir: /srv
+bin_dir: %(base_dir)s/bin
+`
+    p, err := configparser.NewConfigParser([]byte(data))
+    if err != nil {
+    	...
+    }
+```
+
 ## Methods
 The ConfigParser implements most of the Python ConfigParser API
 ```Go
